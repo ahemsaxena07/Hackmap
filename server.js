@@ -67,12 +67,6 @@ async function kvGet(key) {
 }
 
 // ── IN-MEMORY FALLBACK ─────────────────────────────────────────────────────
-let memStore = {
-  hackathons: getSeedData(),
-  lastUpdated: new Date().toISOString(),
-  fetchStats: { total: 0, live: 0, upcoming: 0 }
-};
-
 function computeStats(hackathons) {
   const today = new Date(); today.setHours(0,0,0,0);
   let live = 0, upcoming = 0;
@@ -84,6 +78,13 @@ function computeStats(hackathons) {
   }
   return { total: hackathons.length, live, upcoming };
 }
+
+const _seed = getSeedData();
+let memStore = {
+  hackathons: _seed,
+  lastUpdated: new Date().toISOString(),
+  fetchStats: computeStats(_seed)
+};
 
 // ── GET STORE (KV first, memory fallback) ─────────────────────────────────
 async function getStore() {

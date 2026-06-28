@@ -472,26 +472,32 @@ function loadSeed() {
 
 // Step 2: try to fetch live data from the server API (only works when deployed)
 async function tryLiveAPI() {
-  // Detect if we're running via a real server (not file://)
   if (window.location.protocol === 'file:') {
-    document.getElementById('refresh-label').textContent = `${SEED.length} hackathons · open via server to auto-update`;
+    document.getElementById('refresh-label').textContent = `${SEED.length} hackathons loaded`;
     return;
   }
   try {
-    const res = await fetch('/api/hackathons', {signal: AbortSignal.timeout(8000)});
+    const res = await fetch('/api/hackathons', {signal: AbortSignal.timeout(10000)});
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
+    // Merge API data with seed — never let API empty data wipe seed
     if (json.data && json.data.length > 0) {
-      ALL_DATA = json.data;
+      // Merge: combine seed + API, deduplicate by id
+      const merged = new Map();
+      SEED.forEach(h => merged.set(h.id, {...h, status: getStatus(h)}));
+      json.data.forEach(h => merged.set(h.id, h));
+      ALL_DATA = Array.from(merged.values());
       updateStats();
       render();
       const ago = json.lastUpdated ? timeAgo(json.lastUpdated) : 'just now';
-      document.getElementById('refresh-label').textContent = `${json.count} hackathons · updated ${ago}`;
+      document.getElementById('refresh-label').textContent = `${ALL_DATA.length} hackathons · updated ${ago}`;
+    } else {
+      // API returned empty — keep seed data, still show it
+      document.getElementById('refresh-label').textContent = `${ALL_DATA.length} hackathons loaded`;
     }
   } catch (e) {
-    // Server not reachable — seed data already shown, that's fine
-    document.getElementById('refresh-label').textContent = `${ALL_DATA.length} verified hackathons`;
-    console.info('Live API not available, showing seed data:', e.message);
+    document.getElementById('refresh-label').textContent = `${ALL_DATA.length} hackathons loaded`;
+    console.info('Live API not reachable, showing seed data:', e.message);
   }
 }
 
