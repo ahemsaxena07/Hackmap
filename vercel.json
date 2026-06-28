@@ -1,8 +1,16 @@
 {
-  "crons": [
+  "version": 2,
+  "builds": [
     {
-      "path": "/api/cron/send-digests",
-      "schedule": "0 9 * * 1"
+      "src": "server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["public/**", "scraper.js"]
+      }
     }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "server.js" },
+    { "src": "/(.*)",     "dest": "server.js" }
   ]
 }

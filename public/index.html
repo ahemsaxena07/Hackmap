@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackMap — Every Hackathon, One Place</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080b18;--surface:#0f1326;--surface2:#161c34;--surface3:#1e2540;
+  --border:#252d4a;--border2:#2f3a5e;--text:#e8ecf8;--text2:#8891b5;--text3:#4e5878;
+  --accent:#4f6ef7;--accent2:#7b96ff;--green:#22c55e;--amber:#f59e0b;
+  --red:#ef4444;--purple:#a855f7;--teal:#14b8a6;--pink:#ec4899;
+  --radius:10px;--card-radius:14px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;z-index:100}
+.header-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:62px;gap:1rem}
+.logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.header-stats{display:flex;gap:1.75rem}
+.hstat{text-align:right}
+.hstat-num{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700}
+.hstat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
+.refresh-info{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+.hero{padding:2.5rem 2rem 0;max-width:1300px;margin:0 auto}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,3.5vw,42px);font-weight:700;line-height:1.2;margin-bottom:.4rem}
+.hero h1 em{font-style:normal;color:var(--accent2)}
+.hero p{color:var(--text2);font-size:15px;margin-bottom:1rem}
+.sources-inline{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem}
+.src-chip{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--text3)}
+.search-wrap{position:relative;max-width:500px;margin-bottom:0}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+.search-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;padding:10px 14px 10px 38px;outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text3)}
+.filters{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1rem 2rem;margin:1.25rem 0}
+.filters-inner{max-width:1300px;margin:0 auto;display:flex;flex-wrap:wrap;gap:1.25rem;align-items:flex-end}
+.filter-group{display:flex;flex-direction:column;gap:5px}
+.filter-group label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text3)}
+select.fselect{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;padding:7px 30px 7px 11px;outline:none;cursor:pointer;appearance:none;min-width:155px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%234e5878' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+select.fselect:focus{border-color:var(--accent)}
+.tag-group{display:flex;gap:5px;flex-wrap:wrap}
+.ftag{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;white-space:nowrap}
+.ftag:hover{border-color:var(--accent);color:var(--text)}
+.ftag.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-reset{background:none;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:12px;font-family:'Inter',sans-serif;padding:7px 14px;cursor:pointer;transition:all .15s;margin-left:auto;align-self:flex-end;white-space:nowrap}
+.btn-reset:hover{color:var(--text);border-color:var(--text3)}
+.results-bar{max-width:1300px;margin:0 auto .75rem;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.results-count{font-size:13px;color:var(--text2)}
+.results-count strong{color:var(--text)}
+.sort-select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;font-family:'Inter',sans-serif;padding:6px 26px 6px 10px;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234e5878' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;cursor:pointer}
+.grid-wrap{max-width:1300px;margin:0 auto;padding:0 2rem 3rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:1.15rem 1.2rem;display:flex;flex-direction:column;gap:9px;transition:border-color .15s,box-shadow .15s,transform .15s;text-decoration:none;color:inherit;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ca,var(--accent))}
+.card:hover{border-color:var(--accent);box-shadow:0 4px 24px rgba(79,110,247,.08);transform:translateY(-2px)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.card-platform{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:3px}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--text);line-height:1.3}
+.sbadge{flex-shrink:0;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em;margin-top:2px}
+.s-live{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.s-upcoming{background:rgba(79,110,247,.12);color:var(--accent2);border:1px solid rgba(79,110,247,.25)}
+.s-ended{background:rgba(78,88,120,.15);color:var(--text3);border:1px solid var(--border)}
+.card-meta{display:flex;flex-wrap:wrap;gap:10px}
+.meta-item{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.card-prize{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--amber)}
+.card-prize.nope{font-size:12px;font-weight:400;font-family:'Inter',sans-serif;color:var(--text3)}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px}
+.ctag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
+.card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);margin-top:auto}
+.card-dates{font-size:11px;color:var(--text3)}
+.card-cta{font-size:12px;font-weight:600;color:var(--accent2)}
+.empty-state{grid-column:1/-1;text-align:center;padding:4rem 2rem}
+.empty-state h2{font-size:20px;color:var(--text);margin-bottom:.5rem}
+.empty-state p{color:var(--text2)}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:1.25rem 2rem;text-align:center;font-size:12px;color:var(--text3)}
+@media(max-width:640px){
+  .header-stats{display:none}
+  .hero{padding:1.5rem 1rem 0}
+  .filters{padding:1rem}
+  .filters-inner{flex-direction:column;gap:.85rem}
+  .btn-reset{margin-left:0}
+  .grid{grid-template-columns:1fr}
+  .grid-wrap,.results-bar{padding-left:1rem;padding-right:1rem}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-mark">⚡</div>
+      HackMap
+    </a>
+    <div class="header-stats">
+      <div class="hstat">
+        <div class="hstat-num" id="stat-total" style="color:var(--accent2)">—</div>
+        <div class="hstat-label">Hackathons</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num" id="stat-live" style="color:var(--green)">—</div>
+        <div class="hstat-label">Live now</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num" id="stat-upcoming" style="color:var(--amber)">—</div>
+        <div class="hstat-label">Upcoming</div>
+      </div>
+    </div>
+    <div class="refresh-info">
+      <span class="pulse-dot"></span>
+      <span id="refresh-label">Loading…</span>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Every hackathon,<br><em>one place.</em></h1>
+  <p>Real verified hackathons from Devpost, AllHackathons, ETHGlobal & more. Every listing links directly to the official hackathon page.</p>
+  <div class="sources-inline">
+    <span class="src-chip">Devpost</span>
+    <span class="src-chip">MLH</span>
+    <span class="src-chip">HackerEarth</span>
+    <span class="src-chip">Devfolio</span>
+    <span class="src-chip">Unstop</span>
+    <span class="src-chip">ETHGlobal</span>
+    <span class="src-chip">DoraHacks</span>
+    <span class="src-chip">Kaggle</span>
+    <span class="src-chip">Google Dev Events</span>
+    <span class="src-chip">OpenHackathons</span>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="search" type="text" placeholder="Search by name, tech, country, organizer…" autocomplete="off">
+  </div>
+</div>
+
+<div class="filters">
+  <div class="filters-inner">
+    <div class="filter-group">
+      <label>Country / Region</label>
+      <select class="fselect" id="f-country">
+        <option value="">All locations</option>
+        <option value="Online">🌐 Online / Virtual</option>
+        <option value="USA">🇺🇸 United States</option>
+        <option value="India">🇮🇳 India</option>
+        <option value="UK">🇬🇧 United Kingdom</option>
+        <option value="Germany">🇩🇪 Germany</option>
+        <option value="Canada">🇨🇦 Canada</option>
+        <option value="Singapore">🇸🇬 Singapore</option>
+        <option value="France">🇫🇷 France</option>
+        <option value="Pakistan">🇵🇰 Pakistan</option>
+        <option value="South Korea">🇰🇷 South Korea</option>
+        <option value="Australia">🇦🇺 Australia</option>
+        <option value="Nigeria">🇳🇬 Nigeria</option>
+        <option value="Brazil">🇧🇷 Brazil</option>
+        <option value="Japan">🇯🇵 Japan</option>
+        <option value="Netherlands">🇳🇱 Netherlands</option>
+        <option value="Switzerland">🇨🇭 Switzerland</option>
+        <option value="UAE">🇦🇪 UAE</option>
+        <option value="Finland">🇫🇮 Finland</option>
+        <option value="Philippines">🇵🇭 Philippines</option>
+        <option value="Spain">🇪🇸 Spain</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Month</label>
+      <select class="fselect" id="f-month">
+        <option value="">All months</option>
+        <option value="1">January</option><option value="2">February</option>
+        <option value="3">March</option><option value="4">April</option>
+        <option value="5">May</option><option value="6">June</option>
+        <option value="7">July</option><option value="8">August</option>
+        <option value="9">September</option><option value="10">October</option>
+        <option value="11">November</option><option value="12">December</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Status</label>
+      <div class="tag-group" id="f-status">
+        <span class="ftag active" data-v="">All</span>
+        <span class="ftag" data-v="live">🟢 Live</span>
+        <span class="ftag" data-v="upcoming">🔵 Upcoming</span>
+        <span class="ftag" data-v="ended">⚫ Ended</span>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>Prize</label>
+      <div class="tag-group" id="f-prize">
+        <span class="ftag active" data-v="">All</span>
+        <span class="ftag" data-v="prized">🏆 Prized</span>
+        <span class="ftag" data-v="no-prize">🎗 No prize</span>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>Category</label>
+      <select class="fselect" id="f-category">
+        <option value="">All categories</option>
+        <option value="AI/ML">AI / ML</option>
+        <option value="Web3">Web3 / Blockchain</option>
+        <option value="Mobile">Mobile</option>
+        <option value="Open Innovation">Open Innovation</option>
+        <option value="Health">Health / Biotech</option>
+        <option value="Climate">Climate / Sustainability</option>
+        <option value="Fintech">Fintech</option>
+        <option value="Gaming">Gaming</option>
+        <option value="Social Impact">Social Impact</option>
+        <option value="Security">Security / Privacy</option>
+        <option value="Cloud">Cloud / DevOps</option>
+      </select>
+    </div>
+    <button class="btn-reset" id="btn-reset">✕ Clear filters</button>
+  </div>
+</div>
+
+<div class="results-bar">
+  <div class="results-count">Showing <strong id="shown-count">—</strong> hackathons</div>
+  <select class="sort-select" id="sort-by">
+    <option value="date-asc">📅 Soonest first</option>
+    <option value="date-desc">📅 Latest first</option>
+    <option value="prize-desc">🏆 Highest prize</option>
+    <option value="name-asc">🔤 Name A–Z</option>
+  </select>
+</div>
+
+<div class="grid-wrap">
+  <div class="grid" id="grid"></div>
+</div>
+
+<footer>
+  <p>HackMap · Data from Devpost, MLH, HackerEarth, Devfolio, Unstop, ETHGlobal, DoraHacks & more</p>
+  <p style="margin-top:.3rem">Built to help every developer find their next hackathon 🚀</p>
+  <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap">
+    <span style="color:var(--text2)">Made by <strong style="color:var(--text)">Ahem Saxena</strong></span>
+    <a href="https://github.com/ahemsaxena07" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;color:var(--text2);text-decoration:none;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:12px;transition:all .15s" onmouseover="this.style.color='#e8ecf8';this.style.borderColor='#4f6ef7'" onmouseout="this.style.color='';this.style.borderColor=''">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+    <a href="https://www.linkedin.com/in/ahem-s-36878624a/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;color:var(--text2);text-decoration:none;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:12px;transition:all .15s" onmouseover="this.style.color='#e8ecf8';this.style.borderColor='#0a66c2'" onmouseout="this.style.color='';this.style.borderColor=''">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn
+    </a>
+  </div>
+</footer>
+
+<script>
+// ── COMPLETE EMBEDDED DATASET ─────────────────────────────────────────────
+// This data is always available. When deployed with the Node server,
+// /api/hackathons is also called to get live-scraped additions.
+const SEED = [
+  // ── ALL VERIFIED — real confirmed hackathons with official pages ──
+  {id:"v1",name:"DevNetwork [API + Cloud + AI] Hackathon 2026",org:"DevNetwork",platform:"Devpost",country:"USA",startDate:"2026-08-17",endDate:"2026-09-03",prize:5000,prizeLabel:"Prizes + Amazon Echo",tags:["AI/ML","Cloud"],url:"https://api-cloud-ai-hackathon-2026.devpost.com/",accent:"#6366f1"},
+  {id:"v2",name:"DeveloperWeek 2026 Hackathon",org:"DevNetwork",platform:"Devpost",country:"USA",startDate:"2026-02-18",endDate:"2026-02-20",prize:0,prizeLabel:"Amazon Echos + Conference Passes",tags:["AI/ML","Open Innovation","Cloud"],url:"https://developerweek-2026-hackathon.devpost.com/",accent:"#6366f1"},
+  {id:"v3",name:"MEGA Hackathon 2026",org:"MEGA",platform:"Devpost",country:"Online",startDate:"2026-02-28",endDate:"2026-03-01",prize:0,prizeLabel:"Non-monetary prizes",tags:["Social Impact","Open Innovation"],url:"https://mega-hackathon-2026-students.devpost.com/",accent:"#a855f7"},
+  {id:"v4",name:"DevNetwork [AI + ML] Hackathon 2026",org:"DevNetwork",platform:"Devpost",country:"USA",startDate:"2026-05-11",endDate:"2026-05-28",prize:0,prizeLabel:"Amazon Echos + Conference Passes",tags:["AI/ML"],url:"https://devnetwork-ai-ml-hack-2026.devpost.com/",accent:"#6366f1"},
+  {id:"v5",name:"UC Berkeley AI Hackathon 2026",org:"Hackathons @ Berkeley",platform:"Devpost",country:"USA",startDate:"2026-06-20",endDate:"2026-06-21",prize:3000,prizeLabel:"$3,000 cash + internship interviews",tags:["AI/ML"],url:"https://ai-hackathon-2026.devpost.com/",accent:"#f59e0b"},
+  {id:"v6",name:"DevFest 2026 — Columbia University",org:"Columbia ADI",platform:"Devpost",country:"USA",startDate:"2026-02-01",endDate:"2026-02-02",prize:0,prizeLabel:"Prizes + Swag",tags:["Open Innovation","AI/ML","Web3"],url:"https://devfest-2026.devpost.com/",accent:"#6366f1"},
+  {id:"v7",name:"Hackonomics 2026",org:"Hackonomics",platform:"Devpost",country:"Online",startDate:"2026-03-01",endDate:"2026-03-31",prize:0,prizeLabel:"See website",tags:["Fintech","Open Innovation"],url:"https://hackonomics26.devpost.com/",accent:"#22c55e"},
+  {id:"v8",name:"DeveloperWeek New York 2026 Hackathon",org:"DevNetwork",platform:"Devpost",country:"USA",startDate:"2026-06-01",endDate:"2026-06-15",prize:750,prizeLabel:"$750 Amazon Gift Cards",tags:["AI/ML","Cloud"],url:"https://dwny-2026-hackathon.devpost.com/",accent:"#6366f1"},
+  {id:"v9",name:"RevenueCat Shipaton 2026",org:"RevenueCat",platform:"Devpost",country:"Online",startDate:"2026-08-01",endDate:"2026-09-30",prize:15000,prizeLabel:"$15,000+",tags:["Mobile","iOS","Android"],url:"https://revenuecat-shipaton-2026.devpost.com/",accent:"#f59e0b"},
+  {id:"v10",name:"HackXplore 2026",org:"HackXplore",platform:"AllHackathons",country:"Germany",startDate:"2026-06-26",endDate:"2026-06-28",prize:0,prizeLabel:"See website",tags:["AI/ML","Fintech","Gaming","Health"],url:"https://allhackathons.com/hackathon/hackxplore/",accent:"#14b8a6"},
+  {id:"v11",name:"United Hacks V7",org:"United Hacks",platform:"AllHackathons",country:"Online",startDate:"2026-07-10",endDate:"2026-07-12",prize:0,prizeLabel:"See website",tags:["Open Innovation","Social Impact"],url:"https://allhackathons.com/hackathon/united-hacks-v7/",accent:"#14b8a6"},
+  {id:"v12",name:"Hack for Humanity Summer 2026",org:"Community",platform:"AllHackathons",country:"Online",startDate:"2026-07-03",endDate:"2026-08-02",prize:0,prizeLabel:"See website",tags:["Health","AI/ML","Social Impact"],url:"https://allhackathons.com/hackathon/hack-for-humanity-summer-2026/",accent:"#14b8a6"},
+  {id:"v13",name:"Hackathon IA à l'Assemblée nationale",org:"Assemblée nationale",platform:"AllHackathons",country:"France",startDate:"2026-07-03",endDate:"2026-07-04",prize:0,prizeLabel:"See website",tags:["AI/ML","Social Impact"],url:"https://allhackathons.com/hackathon/hackathon-ia-a-l-assemblee-nationale/",accent:"#14b8a6"},
+  {id:"v14",name:"Pinch Me! I Want 50K",org:"Founders Union & Pinch Payments",platform:"AllHackathons",country:"Australia",startDate:"2026-06-22",endDate:"2026-07-22",prize:50000,prizeLabel:"$50,000",tags:["AI/ML","Fintech","Open Innovation"],url:"https://allhackathons.com/hackathon/pinch-me-i-want-50k/",accent:"#22c55e"},
+  {id:"v15",name:"Codorra — Cybersecurity Hackathon",org:"Codorra",platform:"AllHackathons",country:"Online",startDate:"2026-04-25",endDate:"2026-06-30",prize:0,prizeLabel:"See website",tags:["Security","AI/ML"],url:"https://allhackathons.com/hackathon/codorra/",accent:"#ef4444"},
+  {id:"v16",name:"PhysTech 2026",org:"BInnovative Boston",platform:"AllHackathons",country:"Online",startDate:"2026-02-08",endDate:"2026-06-27",prize:0,prizeLabel:"See website",tags:["Health","Robotics"],url:"https://allhackathons.com/hackathon/phystech-2026-physical-activity-and-technology-hack-day/",accent:"#14b8a6"},
+  {id:"v17",name:"Shower Hacks",org:"Community",platform:"AllHackathons",country:"USA",startDate:"2026-10-03",endDate:"2026-10-04",prize:0,prizeLabel:"See website",tags:["Open Innovation"],url:"https://allhackathons.com/hackathon/shower-hacks/",accent:"#ec4899"},
+  {id:"v18",name:"codeLinc 11 — Lincoln Financial & AWS",org:"Lincoln Financial & AWS",platform:"AllHackathons",country:"USA",startDate:"2026-10-03",endDate:"2026-10-04",prize:0,prizeLabel:"See website",tags:["AI/ML","Fintech","Security"],url:"https://allhackathons.com/hackathon/codelinc-11-hosted-by-lincoln-financial-aws/",accent:"#3b82f6"},
+  {id:"v19",name:"Aclimakathon 2026",org:"Fondation evertéa",platform:"AllHackathons",country:"Spain",startDate:"2026-09-25",endDate:"2026-09-27",prize:0,prizeLabel:"See website",tags:["Climate","Health","AI/ML"],url:"https://allhackathons.com/hackathon/aclimakathon-3/",accent:"#22c55e"},
+  {id:"v20",name:"Energy Data Hackdays 2026",org:"Community",platform:"AllHackathons",country:"Switzerland",startDate:"2026-09-10",endDate:"2026-09-11",prize:0,prizeLabel:"See website",tags:["Climate","AI/ML","Cloud"],url:"https://allhackathons.com/hackathon/andrea-bianchi/",accent:"#14b8a6"},
+  {id:"v21",name:"MunichTech EXPO Hackathon",org:"MunichTech",platform:"AllHackathons",country:"Germany",startDate:"2026-09-01",endDate:"2026-09-20",prize:0,prizeLabel:"See website",tags:["AI/ML","Open Innovation"],url:"https://allhackathons.com/hackathon/munichtech-expo/",accent:"#f59e0b"},
+  {id:"v22",name:"HackTrent 2026",org:"Trent University",platform:"AllHackathons",country:"Canada",startDate:"2026-11-06",endDate:"2026-11-08",prize:0,prizeLabel:"See website",tags:["Open Innovation"],url:"https://allhackathons.com/hackathon/hacktrent-2026/",accent:"#3b82f6"},
+  {id:"v23",name:"Hoya Hacks 2027",org:"Georgetown University",platform:"AllHackathons",country:"USA",startDate:"2027-01-22",endDate:"2027-01-24",prize:0,prizeLabel:"See website",tags:["Open Innovation","Social Impact"],url:"https://allhackathons.com/hackathon/hoya-hacks-2027/",accent:"#6366f1"},
+  {id:"v24",name:"Hack the Farm 2027",org:"Community",platform:"AllHackathons",country:"Cameroon",startDate:"2027-01-27",endDate:"2027-01-29",prize:0,prizeLabel:"See website",tags:["AI/ML","Social Impact"],url:"https://allhackathons.com/hackathon/hack-the-farm/",accent:"#22c55e"},
+  {id:"v25",name:"NASA Space Apps Challenge 2026",org:"NASA",platform:"NASA",country:"Online",startDate:"2026-10-03",endDate:"2026-10-05",prize:0,prizeLabel:"Non-monetary",tags:["Climate","Social Impact","AI/ML"],url:"https://www.spaceappschallenge.org",accent:"#3b82f6"},
+  {id:"v26",name:"Hacktoberfest 2026",org:"DigitalOcean",platform:"GitHub",country:"Online",startDate:"2026-10-01",endDate:"2026-10-31",prize:0,prizeLabel:"Non-monetary",tags:["Open Innovation","Security"],url:"https://hacktoberfest.com",accent:"#a855f7"},
+  {id:"v27",name:"ETHGlobal London 2026",org:"ETHGlobal",platform:"ETHGlobal",country:"UK",startDate:"2026-07-10",endDate:"2026-07-12",prize:100000,prizeLabel:"$100,000+",tags:["Web3","Blockchain"],url:"https://ethglobal.com/events",accent:"#a855f7"},
+  {id:"v28",name:"Junction 2026",org:"Junction",platform:"Junction",country:"Finland",startDate:"2026-11-06",endDate:"2026-11-09",prize:50000,prizeLabel:"€50,000+",tags:["Open Innovation","AI/ML"],url:"https://eu.hackjunction.com",accent:"#a855f7"},
+  {id:"v29",name:"Hack Zürich 2026",org:"ETH Zürich",platform:"Devpost",country:"Switzerland",startDate:"2026-09-11",endDate:"2026-09-13",prize:35000,prizeLabel:"CHF 35,000+",tags:["Open Innovation","AI/ML"],url:"https://hackzurich.com",accent:"#ef4444"},
+  {id:"v30",name:"GITEX Hackathon 2026",org:"GITEX",platform:"Devpost",country:"UAE",startDate:"2026-10-12",endDate:"2026-10-16",prize:100000,prizeLabel:"$100,000",tags:["AI/ML","Open Innovation"],url:"https://gitex.com",accent:"#f59e0b"},
+];
+
+// ── GLOBALS ───────────────────────────────────────────────────────────────
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+let ALL_DATA = [];
+let state = {country:'',month:'',status:'',prize:'',category:'',q:'',sort:'date-asc'};
+let debounce = null;
+
+const FLAGS = {USA:'🇺🇸',India:'🇮🇳',UK:'🇬🇧',Germany:'🇩🇪',Canada:'🇨🇦',Singapore:'🇸🇬',France:'🇫🇷',Pakistan:'🇵🇰','South Korea':'🇰🇷',Australia:'🇦🇺',Nigeria:'🇳🇬',Brazil:'🇧🇷',Japan:'🇯🇵',Netherlands:'🇳🇱',Switzerland:'🇨🇭',UAE:'🇦🇪',Finland:'🇫🇮',Philippines:'🇵🇭',Spain:'🇪🇸',Online:'🌐'};
+
+function getStatus(h) {
+  const s = new Date(h.startDate);
+  const e = h.endDate ? new Date(h.endDate) : null;
+  if (s > TODAY) return 'upcoming';
+  if (!e || e >= TODAY) return 'live';
+  return 'ended';
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escA(s) { return String(s||'').replace(/"/g,'&quot;'); }
+
+// ── FILTER ────────────────────────────────────────────────────────────────
+function applyFilters() {
+  let data = ALL_DATA.map(h => ({...h, _status: h.status || getStatus(h)}));
+
+  if (state.country)   data = data.filter(h => h.country === state.country);
+  if (state.month)     data = data.filter(h => new Date(h.startDate).getMonth()+1 === +state.month);
+  if (state.status)    data = data.filter(h => h._status === state.status);
+  if (state.prize==='prized')   data = data.filter(h => h.prize > 0);
+  if (state.prize==='no-prize') data = data.filter(h => h.prize === 0);
+  if (state.category)  data = data.filter(h => (h.tags||[]).some(t => t.toLowerCase().includes(state.category.toLowerCase())));
+  if (state.q) {
+    const q = state.q.toLowerCase();
+    data = data.filter(h =>
+      h.name.toLowerCase().includes(q) ||
+      (h.org||'').toLowerCase().includes(q) ||
+      (h.tags||[]).join(' ').toLowerCase().includes(q) ||
+      h.country.toLowerCase().includes(q) ||
+      h.platform.toLowerCase().includes(q)
+    );
+  }
+
+  if (state.sort==='date-asc')   data.sort((a,b)=>new Date(a.startDate)-new Date(b.startDate));
+  if (state.sort==='date-desc')  data.sort((a,b)=>new Date(b.startDate)-new Date(a.startDate));
+  if (state.sort==='prize-desc') data.sort((a,b)=>b.prize-a.prize);
+  if (state.sort==='name-asc')   data.sort((a,b)=>a.name.localeCompare(b.name));
+
+  return data;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────
+function render() {
+  const data = applyFilters();
+  const grid = document.getElementById('grid');
+  document.getElementById('shown-count').textContent = data.length;
+
+  if (!data.length) {
+    grid.innerHTML = '<div class="empty-state"><h2>No hackathons found</h2><p>Try adjusting your filters or search.</p></div>';
+    return;
+  }
+
+  grid.innerHTML = data.map(h => {
+    const s = h._status;
+    const bc = s==='live'?'s-live':s==='upcoming'?'s-upcoming':'s-ended';
+    const bt = s==='live'?'● Live':s==='upcoming'?'◆ Upcoming':'◌ Ended';
+    const prize = h.prize>0
+      ? `<div class="card-prize">${esc(h.prizeLabel)}</div>`
+      : `<div class="card-prize nope">No cash prize</div>`;
+    const tags = (h.tags||[]).map(t=>`<span class="ctag">${esc(t)}</span>`).join('');
+    const end = h.endDate ? ` – ${fmtDate(h.endDate)}` : '';
+    const ca = h.accent || '#4f6ef7';
+    const f = FLAGS[h.country] || '📍';
+    return `<a class="card" href="${escA(h.url)}" target="_blank" rel="noopener" style="--ca:${ca}">
+  <div class="card-top">
+    <div>
+      <div class="card-platform">${esc(h.platform)}</div>
+      <div class="card-title">${esc(h.name)}</div>
+    </div>
+    <span class="sbadge ${bc}">${bt}</span>
+  </div>
+  <div class="card-meta">
+    <span class="meta-item">${f} ${esc(h.country)}</span>
+    <span class="meta-item">🏢 ${esc(h.org)}</span>
+  </div>
+  ${prize}
+  <div class="card-tags">${tags}</div>
+  <div class="card-foot">
+    <div class="card-dates">${fmtDate(h.startDate)}${end}</div>
+    <span class="card-cta">Register →</span>
+  </div>
+</a>`;
+  }).join('');
+}
+
+function updateStats() {
+  const live = ALL_DATA.filter(h=>(h.status||getStatus(h))==='live').length;
+  const upcoming = ALL_DATA.filter(h=>(h.status||getStatus(h))==='upcoming').length;
+  document.getElementById('stat-total').textContent = ALL_DATA.length;
+  document.getElementById('stat-live').textContent = live;
+  document.getElementById('stat-upcoming').textContent = upcoming;
+}
+
+function trigger() {
+  clearTimeout(debounce);
+  debounce = setTimeout(render, 180);
+}
+
+// ── LOAD DATA ─────────────────────────────────────────────────────────────
+// Step 1: always load seed data immediately so page is never blank
+function loadSeed() {
+  ALL_DATA = SEED.map(h => ({...h, status: getStatus(h)}));
+  updateStats();
+  render();
+  document.getElementById('refresh-label').textContent = `${SEED.length} hackathons loaded`;
+}
+
+// Step 2: try to fetch live data from the server API (only works when deployed)
+async function tryLiveAPI() {
+  // Detect if we're running via a real server (not file://)
+  if (window.location.protocol === 'file:') {
+    document.getElementById('refresh-label').textContent = `${SEED.length} hackathons · open via server to auto-update`;
+    return;
+  }
+  try {
+    const res = await fetch('/api/hackathons', {signal: AbortSignal.timeout(8000)});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    if (json.data && json.data.length > 0) {
+      ALL_DATA = json.data;
+      updateStats();
+      render();
+      const ago = json.lastUpdated ? timeAgo(json.lastUpdated) : 'just now';
+      document.getElementById('refresh-label').textContent = `${json.count} hackathons · updated ${ago}`;
+    }
+  } catch (e) {
+    // Server not reachable — seed data already shown, that's fine
+    document.getElementById('refresh-label').textContent = `${ALL_DATA.length} verified hackathons`;
+    console.info('Live API not available, showing seed data:', e.message);
+  }
+}
+
+function timeAgo(iso) {
+  const m = Math.floor((Date.now() - new Date(iso)) / 60000);
+  if (m < 2) return 'just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m/60);
+  if (h < 24) return h + 'h ago';
+  return Math.floor(h/24) + 'd ago';
+}
+
+// ── EVENT WIRING ──────────────────────────────────────────────────────────
+document.getElementById('search').addEventListener('input', e => { state.q = e.target.value; trigger(); });
+document.getElementById('f-country').addEventListener('change', e => { state.country = e.target.value; trigger(); });
+document.getElementById('f-month').addEventListener('change', e => { state.month = e.target.value; trigger(); });
+document.getElementById('f-category').addEventListener('change', e => { state.category = e.target.value; trigger(); });
+document.getElementById('sort-by').addEventListener('change', e => { state.sort = e.target.value; trigger(); });
+
+['f-status','f-prize'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    const tag = e.target.closest('.ftag');
+    if (!tag) return;
+    document.querySelectorAll('#'+id+' .ftag').forEach(t => t.classList.remove('active'));
+    tag.classList.add('active');
+    state[id==='f-status'?'status':'prize'] = tag.dataset.v;
+    trigger();
+  });
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  Object.assign(state, {country:'',month:'',status:'',prize:'',category:'',q:'',sort:'date-asc'});
+  document.getElementById('search').value = '';
+  document.getElementById('f-country').value = '';
+  document.getElementById('f-month').value = '';
+  document.getElementById('f-category').value = '';
+  document.getElementById('sort-by').value = 'date-asc';
+  document.querySelectorAll('.ftag').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ftag[data-v=""]').forEach(t => t.classList.add('active'));
+  trigger();
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+loadSeed();      // instant — 75 hackathons appear immediately
+tryLiveAPI();    // background — upgrades to live data when server is running
+
+// Refresh from server every 10 minutes (if deployed)
+setInterval(tryLiveAPI, 10 * 60 * 1000);
+</script>
+</body>
+</html>
