@@ -1,6 +1,6 @@
 // hackmap-next/src/app/api/ai-match/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import type { Hackathon, AIMatchResult } from "@/types/index";
+import type { Hackathon, AIMatchResult } from "../../../types/index";
 
 export const maxDuration = 30;
 
